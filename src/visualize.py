@@ -2,45 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from scipy.interpolate import CubicSpline
-from kinematics import *
-
-
-def plot_arm(x, y):
-    """
-    Plot the 3-link planar arm based on the joint angles.
-    
-    Parameters:
-    x (list): x-coordinates of the joints
-    y (list): y-coordinates of the joints
-    """
-    if len(x) != 4 or len(y) != 4:
-        raise ValueError("x and y must contain exactly 4 elements each, starting with the base.")
-    
-    # Plot the arm
-    plt.figure()
-    plt.scatter(x, y, c=['black','blue','red','green'], zorder=2)
-    plt.plot(x, y, linestyle='-', c='black', linewidth=2, zorder=1)
-    plt.xlim(min(x) - 1, max(x) + 1)
-    plt.set_ylim(0, max(y) + 1)
-    plt.set_aspect('equal')
-    plt.title("3-Link Planar Arm")
-
-    # Draw end effector
-    dx = x[3] - x[2]
-    dy = y[3] - y[2]
-    length = np.hypot(dx, dy)
-    perp_dx = -dy / length * 0.3 # 0.2 is half length of the perpendicular line
-    perp_dy = dx / length * 0.3
-    
-    para_dx = -perp_dy / np.hypot(perp_dx, perp_dy) * 0.4
-    para_dy = perp_dx / np.hypot(perp_dx, perp_dy) * 0.4
-
-    plt.plot([x[3] - perp_dx - para_dx, x[3] - perp_dx, x[3] + perp_dx, x[3] + perp_dx - para_dx],
-             [y[3] - perp_dy - para_dy, y[3] - perp_dy, y[3] + perp_dy, y[3] + perp_dy - para_dy],
-             c='purple', linewidth=2, zorder=4)
-
-    plt.grid(True)
-    plt.show()
+from src.arm import *
 
 def simulate_cubic_path(theta_start, theta_end, l1, l2, l3, steps=100):
     """
@@ -87,7 +49,44 @@ def simulate_cubic_path(theta_start, theta_end, l1, l2, l3, steps=100):
         eff_line.set_data(eff_x, eff_y)
         return arm_line, eff_line
 
-    ani = FuncAnimation(fig, update, frames=steps, interval=50, blit=True)
+    _ = FuncAnimation(fig, update, frames=steps, interval=50, blit=True)
     
     plt.title("3-Link Arm Simulator")
     plt.show()
+
+# def plot_arm(x, y):
+#     """
+#     Plot the 3-link planar arm based on the joint angles.
+    
+#     Parameters:
+#     x (list): x-coordinates of the joints
+#     y (list): y-coordinates of the joints
+#     """
+#     if len(x) != 4 or len(y) != 4:
+#         raise ValueError("x and y must contain exactly 4 elements each, starting with the base.")
+    
+#     # Plot the arm
+#     plt.figure()
+#     plt.scatter(x, y, c=['black','blue','red','green'], zorder=2)
+#     plt.plot(x, y, linestyle='-', c='black', linewidth=2, zorder=1)
+#     plt.xlim(min(x) - 1, max(x) + 1)
+#     plt.set_ylim(0, max(y) + 1)
+#     plt.set_aspect('equal')
+#     plt.title("3-Link Planar Arm")
+
+#     # Draw end effector
+#     dx = x[3] - x[2]
+#     dy = y[3] - y[2]
+#     length = np.hypot(dx, dy)
+#     perp_dx = -dy / length * 0.3 # 0.2 is half length of the perpendicular line
+#     perp_dy = dx / length * 0.3
+    
+#     para_dx = -perp_dy / np.hypot(perp_dx, perp_dy) * 0.4
+#     para_dy = perp_dx / np.hypot(perp_dx, perp_dy) * 0.4
+
+#     plt.plot([x[3] - perp_dx - para_dx, x[3] - perp_dx, x[3] + perp_dx, x[3] + perp_dx - para_dx],
+#             [y[3] - perp_dy - para_dy, y[3] - perp_dy, y[3] + perp_dy, y[3] + perp_dy - para_dy],
+#             c='purple', linewidth=2, zorder=4)
+
+#     plt.grid(True)
+#     plt.show()
